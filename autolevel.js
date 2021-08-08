@@ -245,11 +245,6 @@ module.exports = class Autolevel {
       z: v.z / dist
     } // direction vector
     let maxSegLength = Units.convert(this.delta, Units.MILLIMETERS, units) / 2
-    res.push({
-      x: p1.x,
-      y: p1.y,
-      z: p1.z
-    }) // first point
     for (let d = maxSegLength; d < dist; d += maxSegLength) {
       res.push({
         x: p1.x + dir.x * d,
