@@ -359,9 +359,9 @@ module.exports = class Autolevel {
                 lineStripped = lineStripped.replace(/([XYZ])([\.\+\-\d]+)/gi, '')
                 if (p0_initialized) {
                     let segs = this.splitToSegments(p0, pt)
-                    for (let seg of segs) {
+                    for (let [index, seg] of segs.entries()) {
                       let cpt = this.compensateZCoord(seg, units)
-                      let newLine = lineStripped + ` X${cpt.x.toFixed(3)} Y${cpt.y.toFixed(3)} Z${cpt.z.toFixed(3)} ; Z${seg.z.toFixed(3)}`
+                      let newLine = lineStripped + ` X${cpt.x.toFixed(3)} Y${cpt.y.toFixed(3)} Z${cpt.z.toFixed(3)} ; Seg${index+1} Z${seg.z.toFixed(3)}`
                       result.push(newLine.trim())
                     }
                 } else {
