@@ -203,12 +203,12 @@ module.exports = class Autolevel {
     return (line.replace(re1, '').replace(re2, '').replace(re3, ''))
   };
 
-  distanceSquared3(p1, p2) {
-    return (p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y) + (p2.z - p1.z) * (p2.z - p1.z)
+  distance3D(p1, p2) {
+    return Math.sqrt((p2.x - p1.x)**2 + (p2.y - p1.y)**2 + (p2.z - p1.z)**2)
   }
 
-  distanceSquared2(p1, p2) {
-    return (p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y)
+  distance2D(p1, p2) {
+    return Math.sqrt((p2.x - p1.x)**2 + (p2.y - p1.y)**2)
   }
 
   crossProduct3(u, v) {
@@ -237,19 +237,19 @@ module.exports = class Autolevel {
 
   splitToSegments(p1, p2, units) {
     let res = []
-    let v = this.sub3(p2, p1) // delta
-    let dist = Math.sqrt(this.distanceSquared3(p1, p2)) // distance
-    let dir = {
-      x: v.x / dist,
-      y: v.y / dist,
-      z: v.z / dist
-    } // direction vector
+    let direction = this.sub3(p2, p1) // direction vector
+    let dist = this.distance3D(p1, p2)
+    let directionNormalized = {
+      x: direction.x / dist,
+      y: direction.y / dist,
+      z: direction.z / dist
+    } // direction vector normalized
     let maxSegLength = Units.convert(this.delta, Units.MILLIMETERS, units) / 2
     for (let d = maxSegLength; d < dist; d += maxSegLength) {
       res.push({
-        x: p1.x + dir.x * d,
-        y: p1.y + dir.y * d,
-        z: p1.z + dir.z * d
+        x: p1.x + directionNormalized.x * d,
+        y: p1.y + directionNormalized.y * d,
+        z: p1.z + directionNormalized.z * d
       }) // split points
     }
     res.push({
@@ -267,7 +267,7 @@ module.exports = class Autolevel {
       return res
     }
     this.probedPoints.sort((a, b) => {
-      return this.distanceSquared2(a, pt) < this.distanceSquared2(b, pt) ? -1 : 1
+      return this.distance2D(a, pt) < this.distance2D(b, pt) ? -1 : 1
     })
     let i = 0
     while (res.length < 3 && i < this.probedPoints.length) {
