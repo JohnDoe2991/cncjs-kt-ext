@@ -35,7 +35,7 @@ module.exports = class Autolevel {
     this.max_dz = 0;
     this.sum_dz = 0;
     this.planedPointCount = 0
-    this.wco = {
+    this.workingCoordToMachineCoordTransform = {
       x: 0,
       y: 0,
       z: 0
@@ -60,9 +60,9 @@ module.exports = class Autolevel {
         if (prbm) {
           let prb = [parseFloat(prbm[1]), parseFloat(prbm[2]), parseFloat(prbm[3])]
           let pt = {
-            x: prb[0] - this.wco.x,
-            y: prb[1] - this.wco.y,
-            z: prb[2] - this.wco.z
+            x: prb[0] - this.workingCoordToMachineCoordTransform.x,
+            y: prb[1] - this.workingCoordToMachineCoordTransform.y,
+            z: prb[2] - this.workingCoordToMachineCoordTransform.z
           }
           if (this.planedPointCount > 0) {
             if(this.probedPoints.length ===0) {
@@ -127,14 +127,14 @@ module.exports = class Autolevel {
 
     console.log(`STEP: ${this.delta} mm HEIGHT:${this.height} mm FEED:${this.feed} MARGIN: ${margin} mm`)
 
-    this.wco = {
+    this.workingCoordToMachineCoordTransform = {
       x: context.mposx - context.posx,
       y: context.mposy - context.posy,
       z: context.mposz - context.posz
     }
     this.probedPoints = []
     this.planedPointCount = 0
-    console.log('WCO:', this.wco)
+    console.log('working coord to machine coord transform:', this.workingCoordToMachineCoordTransform)
     let code = []
 
     let xmin = context.xmin + margin;
@@ -172,13 +172,13 @@ module.exports = class Autolevel {
   }
 
   updateContext(context) {
-      if (this.wco.z != 0 &&
+      if (this.workingCoordToMachineCoordTransform.z != 0 &&
           context.mposz !== undefined &&
           context.posz !== undefined) {
           let wcoz = context.mposz - context.posz;
-          if (Math.abs(this.wco.z - wcoz) > 0.00001) {
-            this.wco.z = wcoz;
-            console.log('WARNING: WCO Z offset drift detected! wco.z is now: ' + this.wco.z);
+          if (Math.abs(this.workingCoordToMachineCoordTransform.z - wcoz) > 0.00001) {
+            this.workingCoordToMachineCoordTransform.z = wcoz;
+            console.log('WARNING: WCO Z offset drift detected! wco.z is now: ' + this.workingCoordToMachineCoordTransform.z);
           }
       }    
   }
