@@ -172,16 +172,29 @@ module.exports = class Autolevel {
   }
 
   updateContext(context) {
-      if (this.workingCoordToMachineCoordTransform.z != 0 &&
-          context.mposz !== undefined &&
-          context.posz !== undefined) {
-          let wcoz = context.mposz - context.posz;
-          if (Math.abs(this.workingCoordToMachineCoordTransform.z - wcoz) > 0.00001) {
-            this.workingCoordToMachineCoordTransform.z = wcoz;
-            console.log('WARNING: WCO Z offset drift detected! wco.z is now: ' + this.workingCoordToMachineCoordTransform.z);
-          }
-      }    
-  }
+    if(context.mposx !== undefined &&
+      context.mposy !== undefined &&
+      context.mposz !== undefined &&
+      context.posx !== undefined &&
+      context.posy !== undefined &&
+      context.posz !== undefined
+      ) {
+        const workingCoordToMachineCoordTransformX = context.mposx - context.posx
+        const workingCoordToMachineCoordTransformY = context.mposy - context.posy
+        const workingCoordToMachineCoordTransformZ = context.mposz - context.posz
+        const diffX = Math.abs(workingCoordToMachineCoordTransformX - this.workingCoordToMachineCoordTransform.x)
+        const diffY = Math.abs(workingCoordToMachineCoordTransformY - this.workingCoordToMachineCoordTransform.y)
+        const diffZ = Math.abs(workingCoordToMachineCoordTransformZ - this.workingCoordToMachineCoordTransform.z)
+        if((diffX > 0.00001) || (diffY > 0.00001) || (diffZ > 0.00001)) {
+          this.workingCoordToMachineCoordTransform.x = workingCoordToMachineCoordTransformX
+          this.workingCoordToMachineCoordTransform.y = workingCoordToMachineCoordTransformY
+          this.workingCoordToMachineCoordTransform.z = workingCoordToMachineCoordTransformZ
+          console.log('WARNING: working coord to machine coord transform changed: ', this.workingCoordToMachineCoordTransform)
+        }
+    } else {
+      console.log("a context value was not set")
+    }   
+}
 
   stripComments(line) {
     const re1 = new RegExp(/\s*\([^\)]*\)/g) // Remove anything inside the parentheses
