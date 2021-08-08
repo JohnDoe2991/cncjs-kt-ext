@@ -75,6 +75,7 @@ module.exports = class Autolevel {
               this.sum_dz += pt.z;
             }
             this.probedPoints.push(pt)
+            console.log('raw probe: ' + data)
             console.log('probed ' + this.probedPoints.length + '/' + this.planedPointCount + '>', pt.x.toFixed(3), pt.y.toFixed(3), pt.z.toFixed(3))
             // send info to console
             if (this.probedPoints.length >= this.planedPointCount) {
