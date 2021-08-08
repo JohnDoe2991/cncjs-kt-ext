@@ -141,17 +141,14 @@ module.exports = class Autolevel {
     let ymin = context.ymin + margin;
     let ymax = context.ymax - margin;
 
+    let probedepth = this.height+1
+
     let dx = (xmax - xmin) / parseInt((xmax - xmin) / this.delta)
     let dy = (ymax - ymin) / parseInt((ymax - ymin) / this.delta)
     code.push('(AL: probing initial point)')
-    code.push(`G21`)
-    code.push(`G90`)
-    code.push(`G0 Z${this.height}`)
-    code.push(`G0 X${xmin.toFixed(3)} Y${ymin.toFixed(3)} Z${this.height}`)
-    code.push(`G38.2 Z-${this.height+1} F${this.feed / 2}`)
-    code.push(`G10 L20 P1 Z0`) // set the z zero
-    code.push(`G0 Z${this.height}`)
-    this.planedPointCount++
+    code.push(`G21`) // millimeter unit mode
+    code.push(`G90`) //enable absolut mode
+    code.push(`G0 Z${this.height}`) // move to travel height
 
     let y = ymin - dy
 
@@ -159,14 +156,13 @@ module.exports = class Autolevel {
       y += dy
       if (y > ymax) y = ymax
       let x = xmin - dx
-      if (y <= ymin + 0.01) x = xmin // don't probe first point twice
 
       while (x < xmax - 0.01) {
         x += dx
         if (x > xmax) x = xmax
         code.push(`(AL: probing point ${this.planedPointCount + 1})`)
-        code.push(`G90 G0 X${x.toFixed(3)} Y${y.toFixed(3)} Z${this.height}`)
-        code.push(`G38.2 Z-${this.height+1} F${this.feed}`)
+        code.push(`G0 X${x.toFixed(3)} Y${y.toFixed(3)} Z${this.height}`)
+        code.push(`G38.2 Z-${probedepth} F${this.feed}`)
         code.push(`G0 Z${this.height}`)
         this.planedPointCount++
       }
@@ -180,8 +176,8 @@ module.exports = class Autolevel {
           context.posz !== undefined) {
           let wcoz = context.mposz - context.posz;
           if (Math.abs(this.wco.z - wcoz) > 0.00001) {
-             this.wco.z = wcoz;
-             console.log('WARNING: WCO Z offset drift detected! wco.z is now: ' + this.wco.z);
+            this.wco.z = wcoz;
+            console.log('WARNING: WCO Z offset drift detected! wco.z is now: ' + this.wco.z);
           }
       }    
   }
