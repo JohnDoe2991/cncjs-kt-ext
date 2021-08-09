@@ -75,7 +75,7 @@ module.exports = class Autolevel {
               this.sum_dz += pt.z;
             }
             this.probedPoints.push(pt)
-            console.log('raw probe: ' + data)
+            //console.log('raw probe: ' + data)
             console.log('probed ' + this.probedPoints.length + '/' + this.planedPointCount + '>', pt.x.toFixed(3), pt.y.toFixed(3), pt.z.toFixed(3))
             // send info to console
             if (this.probedPoints.length >= this.planedPointCount) {
@@ -245,7 +245,7 @@ module.exports = class Autolevel {
       z: direction.z / dist
     } // direction vector normalized
     let maxSegLength = Units.convert(this.delta, Units.MILLIMETERS, units) / 2
-    console.log(`split> p1: ${this.formatPt(p1)} p2: ${this.formatPt(p2)} dist: ${dist} maxSegLength: ${maxSegLength}`)
+    //console.log(`split> p1: ${this.formatPt(p1)} p2: ${this.formatPt(p2)} dist: ${dist} maxSegLength: ${maxSegLength}`)
     for (let d = maxSegLength; d < dist; d += maxSegLength) {
       res.push({
         x: p1.x + directionNormalized.x * d,
