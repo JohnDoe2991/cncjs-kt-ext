@@ -245,6 +245,7 @@ module.exports = class Autolevel {
       z: direction.z / dist
     } // direction vector normalized
     let maxSegLength = Units.convert(this.delta, Units.MILLIMETERS, units) / 2
+    console.log(`split> p1: ${this.formatPt(p1)} p2: ${this.formatPt(p2)} dist: ${dist} maxSegLength: ${maxSegLength}`)
     for (let d = maxSegLength; d < dist; d += maxSegLength) {
       res.push({
         x: p1.x + directionNormalized.x * d,
@@ -358,7 +359,7 @@ module.exports = class Autolevel {
                 // strip coordinates
                 lineStripped = lineStripped.replace(/([XYZ])([\.\+\-\d]+)/gi, '')
                 if (p0_initialized) {
-                    let segs = this.splitToSegments(p0, pt)
+                    let segs = this.splitToSegments(p0, pt, units)
                     for (let [index, seg] of segs.entries()) {
                       let cpt = this.compensateZCoord(seg, units)
                       let newLine = lineStripped + ` X${cpt.x.toFixed(3)} Y${cpt.y.toFixed(3)} Z${cpt.z.toFixed(3)} ; Seg${index+1} Z${seg.z.toFixed(3)}`
